@@ -1,13 +1,20 @@
 /* jshint esversion: 6 */
-import React, {Fragment} from 'react';
+import React, {Fragment, useState} from 'react';
 import ReactDom from 'react-dom';
+import LinkCard from './components/LinkCard';
 
 import './main.css';
 
 // Create the app
 const App = () => {
-    const linkImagesStyle = {
-        backgroundImage: 'url(\'<input type="text" name="linkTitle" minLength="1" maxLength="25" placeholder="25 characters max" />\')'
+    const [cardData, setCardDatat] = useState([{ linkName: 'my link', linkHref: 'https://github.com' }]);
+    const [newCard, setNewCard] = useState({ linkName: '', linkHref: '' });
+
+    const dispatchCardSet = (payload) => {
+        let oldArray = cardData;
+        let newArray = [...oldArray, payload];
+        setCardDatat(newArray);
+        setNewCard({linkHref: '', linkName: ''});
     };
 
     return(
@@ -21,24 +28,21 @@ const App = () => {
             <main>
                 <div className="leftContent">
                     <img src="https://fthmb.tqn.com/cD0PNhMM0BxevlBvAgD1ntpQLac=/3558x2363/filters:fill(auto,1)/Cat-rolling-GettyImages-165893132-58ac5ef05f9b58a3c90a144f.jpg" />
-                    <form>
+                    <form onSubmit={e => e.preventDefault()}>
                         <h2 className="formTitle">Add a bookmark</h2>
                         <div>
-                            <label for="linkTitle" className="formLabel">Enter a bookmark name</label>
-                            <input type="text" name="linkTitle" minLength="1" maxLength="25" placeholder="25 characters max" />
+                            <label htmlFor="linkTitle" className="formLabel">Enter a bookmark name</label>
+                            <input value={newCard.linkName} onChange={e => setNewCard({...newCard, linkName: e.currentTarget.value})} type="text" name="linkTitle" minLength="1" maxLength="25" placeholder="25 characters max" />
                         </div>
                         <div>
-                        <label for="linkHref" className="formLabel">Enter a bookmark name</label>
-                        <input type="text" name="linkHref" minLength="7" maxLength="25" placeholder="https://example.com/" />
+                            <label htmlFor="linkHref" className="formLabel">Enter a bookmark name</label>
+                            <input value={newCard.linkHref} onChange={e => setNewCard({...newCard, linkHref: e.currentTarget.value})} type="text" name="linkHref" minLength="7" maxLength="25" placeholder="https://example.com/" />
                         </div>
-                        <button>Add</button>
+                        <button onClick={() => dispatchCardSet(newCard)}>Add</button>
                     </form>
                 </div>
                 <div className="rightContent">
-                    <div className="linkCard">
-                        <div className="linkCardImage" style={linkImagesStyle}/>
-                        <div className="linkCardLink"><h2><a href="#">My link!</a></h2></div>
-                    </div>
+                    <LinkCard cards={cardData}/>
                 </div>
             </main>
         </Fragment>
